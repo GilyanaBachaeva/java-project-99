@@ -1,0 +1,55 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+/build
+/app/build
+/.idea
+/app/.gradle
+.idea
+.idea/compiler.xml
+app/.gradle/8.5/executionHistory/executionHistory.lock
+/app/wrapper
+/app/daemon/
+app/daemon/8.5/daemon-19316.out.log
+/app/.tmp
+*.bin
+/app/caches
+/app/native
+/app/jdks
+/.gradle/
+jte-classes/gg/jte/generated/ondemand/
+app/jte-classes/gg/jte/generated/ondemand/
