@@ -1,12 +1,17 @@
 plugins {
+	application
 	java
 	jacoco
+	id("io.freefair.lombok") version "8.6"
 	id("org.springframework.boot") version "3.5.0-SNAPSHOT"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("com.github.ben-manes.versions") version "0.50.0"
 }
 
 group = "hexlet.code"
 version = "0.0.1-SNAPSHOT"
+
+application { mainClass.set("hexlet.code.demo.AppApplication") }
 
 java {
 	toolchain {
