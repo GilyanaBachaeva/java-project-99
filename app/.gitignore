@@ -53,3 +53,4 @@ app/daemon/8.5/daemon-19316.out.log
 /.gradle/
 jte-classes/gg/jte/generated/ondemand/
 app/jte-classes/gg/jte/generated/ondemand/
+.env
