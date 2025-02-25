@@ -31,6 +31,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-devtools")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("io.github.cdimascio:dotenv-java:2.2.0")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	//implementation("org.mindrot.jbcrypt:jBCrypt:0.9")
+
 	// H2 Database for Development
 	runtimeOnly("com.h2database:h2")
 
