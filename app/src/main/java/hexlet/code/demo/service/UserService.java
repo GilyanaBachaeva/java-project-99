@@ -1,20 +1,25 @@
 package hexlet.code.demo.service;
 
-import hexlet.code.demo.model.User;
+import hexlet.code.demo.config.EncodersConfig;
+import hexlet.code.demo.dto.UserCreateDTO;
 import hexlet.code.demo.dto.UserDTO;
+import hexlet.code.demo.dto.UserUpdateDTO;
+import hexlet.code.demo.exception.ResourceNotFoundException;
 import hexlet.code.demo.mapper.UserMapper;
+import hexlet.code.demo.model.User;
 import hexlet.code.demo.repository.UserRepository;
+import hexlet.code.demo.util.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService{
+
+    @Autowired
+    private EncodersConfig encodersConfig;
 
     @Autowired
     private UserRepository userRepository;
@@ -22,52 +27,49 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private UserUtils userUtils;
 
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(userMapper::toDto)
+    public List<UserDTO> getAll() {
+        var users = userRepository.findAll();
+        var result = users.stream()
+                .map(userMapper::map)
                 .toList();
+        return result;
     }
 
-    public UserDTO getUserById(Long id) {
+    public UserDTO getById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return userMapper.toDto(user);
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found"));
+        var dto = userMapper.map(user);
+        return dto;
     }
 
-    @Transactional
-    public UserDTO createUser(@Valid UserDTO userDTO) {
-        User user = userMapper.toEntity(userDTO);
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword())); // Хеширование пароля
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-        User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+    public UserDTO create(UserCreateDTO userData) {
+        User user = userMapper.map(userData);
+        PasswordEncoder encoder = encodersConfig.passwordEncoder();
+        String cryptedPassword = encoder.encode(user.getPassword());
+        user.setPassword(cryptedPassword);
+        userRepository.save(user);
+        var dto = userMapper.map(user);
+        return dto;
     }
 
-    @Transactional
-    public UserDTO updateUser(Long id, UserDTO userDetails) {
+    public UserDTO update(UserUpdateDTO userData, Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (userDetails.getEmail() != null) {
-            user.setEmail(userDetails.getEmail());
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found"));
+        if (userData.getPassword() != null && userData.getPassword().isPresent()) {
+            PasswordEncoder encoder = encodersConfig.passwordEncoder();
+            var cryptedPassword = encoder.encode(userData.getPassword().get());
+            user.setPassword(cryptedPassword);
         }
-        if (userDetails.getFirstName() != null) {
-            user.setFirstName(userDetails.getFirstName());
-        }
-        if (userDetails.getLastName() != null) {
-            user.setLastName(userDetails.getLastName());
-        }
-        if (userDetails.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(userDetails.getPassword())); // Хеширование нового пароля
-        }
-        user.setUpdatedAt(LocalDateTime.now());
-        return userMapper.toDto(userRepository.save(user));
+        userMapper.update(userData, user);
+        userRepository.save(user);
+        var dto = userMapper.map(user);
+        return dto;
     }
 
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
         userRepository.deleteById(id);
     }
 }

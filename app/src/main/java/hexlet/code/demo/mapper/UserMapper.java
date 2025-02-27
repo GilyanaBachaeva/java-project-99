@@ -1,27 +1,24 @@
 package hexlet.code.demo.mapper;
 
+import hexlet.code.demo.dto.UserCreateDTO;
+import hexlet.code.demo.dto.UserUpdateDTO;
 import hexlet.code.demo.model.User;
 import hexlet.code.demo.dto.UserDTO;
-import org.springframework.stereotype.Component;
 
-@Component
-public class UserMapper {
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 
-    public UserDTO toDto(User user) {
-        UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setEmail(user.getEmail());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setCreatedAt(user.getCreatedAt());
-        return dto;
-    }
-
-    public User toEntity(UserDTO dto) {
-        User user = new User();
-        user.setEmail(dto.getEmail());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        return user;
-    }
+@Mapper(
+        uses = {JsonNullableMapper.class, ReferenceMapper.class},
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
+public abstract class UserMapper {
+    public abstract User map(UserCreateDTO dto);
+    public abstract UserDTO map(User model);
+    public abstract void update(UserUpdateDTO dto, @MappingTarget User model);
 }
