@@ -1,18 +1,14 @@
 package hexlet.code.demo.util;
 
 import hexlet.code.demo.model.User;
+import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import net.datafaker.Faker;
 import org.instancio.Instancio;
 import org.instancio.Model;
 import org.instancio.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-//import io.hexlet.blog.model.Post;
-//import io.hexlet.blog.model.PostComment;
-
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
-import net.datafaker.Faker;
 
 @Getter
 @Component
