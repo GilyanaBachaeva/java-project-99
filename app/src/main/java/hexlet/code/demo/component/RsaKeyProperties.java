@@ -1,6 +1,5 @@
 package hexlet.code.demo.component;
 
-import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -17,12 +16,4 @@ import lombok.Setter;
 public class RsaKeyProperties {
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
-
-    public RSAPublicKey getRsaPublicKey() {
-        return publicKey;
-    }
-
-    public PrivateKey getRsaPrivateKey() {
-        return privateKey;
-    }
 }

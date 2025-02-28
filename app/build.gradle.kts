@@ -36,7 +36,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
-
+	implementation("io.github.cdimascio:dotenv-java:2.2.0")
 	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 	implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
@@ -52,6 +52,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation(platform("org.junit:junit-bom:5.10.1"))
 	testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+	testImplementation("net.datafaker:datafaker")
+	testImplementation("org.instancio:instancio-core")
 }
 
 tasks.withType<Test> {

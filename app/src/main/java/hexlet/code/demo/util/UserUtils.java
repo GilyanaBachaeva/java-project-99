@@ -17,7 +17,13 @@ public class UserUtils {
             return null;
         }
         var email = authentification.getName();
-        return userRepository.findByEmail(email).get();
+        return userRepository.findByEmail(email).orElseThrow();
+    }
+
+    public boolean isCurrentUser(Long id) {
+        var emailOfUser = userRepository.findById(id).orElseThrow().getEmail();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        return emailOfUser.equals(authentication.getName());
     }
 
     public User getTestUser() {
