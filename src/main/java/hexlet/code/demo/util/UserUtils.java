@@ -2,14 +2,15 @@ package hexlet.code.demo.util;
 
 import hexlet.code.demo.model.User;
 import hexlet.code.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+
 @Component
-public class UserUtils {
-    @Autowired
-    private UserRepository userRepository;
+@RequiredArgsConstructor
+public final class UserUtils {
+    private final UserRepository userRepository;
 
     public User getCurrentUser() {
         var authentification = SecurityContextHolder.getContext().getAuthentication();
@@ -24,6 +25,11 @@ public class UserUtils {
         var emailOfUser = userRepository.findById(id).orElseThrow().getEmail();
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         return emailOfUser.equals(authentication.getName());
+    }
+
+    public boolean userHasAuthentication() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated();
     }
 
     public User getTestUser() {

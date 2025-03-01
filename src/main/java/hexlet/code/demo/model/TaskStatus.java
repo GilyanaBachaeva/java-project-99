@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "task_statuses")
 @Getter

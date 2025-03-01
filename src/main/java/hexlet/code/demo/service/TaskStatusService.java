@@ -7,18 +7,16 @@ import hexlet.code.demo.exception.ResourceNotFoundException;
 import hexlet.code.demo.mapper.TaskStatusMapper;
 import hexlet.code.demo.model.TaskStatus;
 import hexlet.code.demo.repository.TaskStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public final class TaskStatusService {
-    @Autowired
-    private TaskStatusRepository taskStatusRepository;
-
-    @Autowired
-    private TaskStatusMapper taskStatusMapper;
+    private final TaskStatusRepository taskStatusRepository;
+    private final TaskStatusMapper taskStatusMapper;
 
     public List<TaskStatusDTO> getAll() {
         List<TaskStatus> tasks = taskStatusRepository.findAll();
@@ -40,7 +38,6 @@ public final class TaskStatusService {
         taskStatusRepository.save(model);
         TaskStatusDTO dto = taskStatusMapper.map(model);
         return dto;
-        //here if save 2 same slug - 422 should be thrown. Point for check
     }
 
     public TaskStatusDTO update(TaskStatusUpdateDTO taskStatusData, Long id) {

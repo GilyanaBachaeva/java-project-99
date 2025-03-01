@@ -1,8 +1,7 @@
 package hexlet.code.demo.service;
 
-import hexlet.code.demo.config.EncodersConfig;
 import hexlet.code.demo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,21 +9,16 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsManager {
-    @Autowired
-    private EncodersConfig encodersConfig;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+@RequiredArgsConstructor
+public final class CustomUserDetailsService implements UserDetailsManager {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User with " + email + " not found"));
-        return (UserDetails) user;
+        return user;
     }
 
     @Override
