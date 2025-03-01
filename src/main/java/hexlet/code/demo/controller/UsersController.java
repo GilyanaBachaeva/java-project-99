@@ -1,8 +1,8 @@
 package hexlet.code.demo.controller;
 
-import hexlet.code.demo.dto.UserCreateDTO;
-import hexlet.code.demo.dto.UserDTO;
-import hexlet.code.demo.dto.UserUpdateDTO;
+import hexlet.code.demo.dto.UserDTO.UserCreateDTO;
+import hexlet.code.demo.dto.UserDTO.UserDTO;
+import hexlet.code.demo.dto.UserDTO.UserUpdateDTO;
 import hexlet.code.demo.service.UserService;
 import hexlet.code.demo.util.UserUtils;
 import jakarta.validation.Valid;

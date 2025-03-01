@@ -1,9 +1,9 @@
 package hexlet.code.demo.mapper;
 
-import hexlet.code.demo.dto.UserCreateDTO;
-import hexlet.code.demo.dto.UserUpdateDTO;
+import hexlet.code.demo.dto.UserDTO.UserCreateDTO;
+import hexlet.code.demo.dto.UserDTO.UserUpdateDTO;
 import hexlet.code.demo.model.User;
-import hexlet.code.demo.dto.UserDTO;
+import hexlet.code.demo.dto.UserDTO.UserDTO;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

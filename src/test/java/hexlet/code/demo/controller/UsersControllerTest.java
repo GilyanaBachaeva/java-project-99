@@ -1,8 +1,8 @@
 package hexlet.code.demo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.demo.dto.UserDTO;
-import hexlet.code.demo.dto.UserUpdateDTO;
+import hexlet.code.demo.dto.UserDTO.UserDTO;
+import hexlet.code.demo.dto.UserDTO.UserUpdateDTO;
 import hexlet.code.demo.mapper.UserMapper;
 import hexlet.code.demo.model.User;
 import hexlet.code.demo.repository.UserRepository;
