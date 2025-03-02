@@ -8,27 +8,18 @@ import hexlet.code.demo.exception.ResourceNotFoundException;
 import hexlet.code.demo.mapper.UserMapper;
 import hexlet.code.demo.model.User;
 import hexlet.code.demo.repository.UserRepository;
-import hexlet.code.demo.util.UserUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService{
-
-    @Autowired
-    private EncodersConfig encodersConfig;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private UserUtils userUtils;
+@RequiredArgsConstructor
+public final class UserService {
+    private final EncodersConfig encodersConfig;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public List<UserDTO> getAll() {
         var users = userRepository.findAll();

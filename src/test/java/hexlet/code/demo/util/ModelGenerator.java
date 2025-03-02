@@ -1,5 +1,6 @@
 package hexlet.code.demo.util;
 
+import hexlet.code.demo.model.Label;
 import hexlet.code.demo.model.Task;
 import hexlet.code.demo.model.TaskStatus;
 import hexlet.code.demo.model.User;
@@ -20,6 +21,7 @@ public final class ModelGenerator {
     private Model<User> userModel;
     private Model<TaskStatus> taskStatusModel;
     private Model<Task> taskModel;
+    private Model<Label> labelModel;
     private final Faker faker;
     private final TaskStatusRepository taskStatusRepository;
 
@@ -43,13 +45,20 @@ public final class ModelGenerator {
                 .toModel();
         taskModel = Instancio.of(Task.class)
                 .ignore(Select.field(Task::getId))
-                .ignore(Select.field(Task::getIndex))
                 .ignore(Select.field(Task::getAssignee))
                 .ignore(Select.field(Task::getCreatedAt))
                 .ignore(Select.field(Task::getUpdatedAt))
+                .ignore(Select.field(Task::getLabels))
                 .supply(Select.field(Task::getName), () -> faker.text().text(1, 10))
+                .supply(Select.field(Task::getIndex), () -> faker.number().numberBetween(100, 1000))
                 .supply(Select.field(Task::getDescription), () -> faker.text().text(30))
                 .supply(Select.field(Task::getTaskStatus), () -> taskStatusRepository.findBySlug("draft").get())
+                .toModel();
+        labelModel = Instancio.of(Label.class)
+                .ignore(Select.field(Label::getId))
+                .ignore(Select.field(Label::getCreatedAt))
+                .ignore(Select.field(Label::getUpdatedAt))
+                .supply(Select.field(Label::getName), () -> faker.text().text(3, 1000))
                 .toModel();
     }
 }

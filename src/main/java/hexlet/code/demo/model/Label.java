@@ -4,12 +4,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,46 +19,26 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "tasks")
-@NoArgsConstructor
+@Table(name = "labels")
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class)
-public final class Task implements BaseEntity {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Label implements BaseEntity {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column
-    @NotNull
+    @Column(unique = true, nullable = false)
     @NotBlank
-    @Size(min = 1)
+    @EqualsAndHashCode.Include
+    @Size(min = 3, max = 1000)
     private String name;
-
-    @Column
-    private Integer index;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    @ManyToMany
-    private Set<Label> labels = new HashSet<>();
-
-    @NotNull
-    @ManyToOne
-    private TaskStatus taskStatus;
-
-    @ManyToOne
-    private User assignee;
 
     @CreatedDate
     private LocalDate createdAt;
@@ -68,8 +46,7 @@ public final class Task implements BaseEntity {
     @LastModifiedDate
     private LocalDate updatedAt;
 
-    public Task(String name, TaskStatus taskStatus) {
+    public Label(String name) {
         this.name = name;
-        this.taskStatus = taskStatus;
     }
 }

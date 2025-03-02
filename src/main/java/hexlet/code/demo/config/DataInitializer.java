@@ -1,7 +1,9 @@
 package hexlet.code.demo.config;
 
+import hexlet.code.demo.model.Label;
 import hexlet.code.demo.model.TaskStatus;
 import hexlet.code.demo.model.User;
+import hexlet.code.demo.repository.LabelRepository;
 import hexlet.code.demo.repository.TaskStatusRepository;
 import hexlet.code.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-
 @Component
 @RequiredArgsConstructor
 public final class DataInitializer {
@@ -20,6 +23,7 @@ public final class DataInitializer {
     private static final String ADMIN_PASSWORD = "qwerty";
     private final UserRepository userRepository;
     private final TaskStatusRepository taskStatusRepository;
+    private final LabelRepository labelRepository;
     private final EncodersConfig encodersConfig;
 
     public static final Map<String, String> DEFAULT_TASK_STATUSES_SLUGS_AND_NAMES_MAP =
@@ -37,6 +41,14 @@ public final class DataInitializer {
                             "Published"
                     ));
 
+    public static final List<String> DEFAULT_LABEL_NAMES =
+            new LinkedList<>(
+                    List.of(
+                            "feature",
+                            "bug"
+                    )
+            );
+
     @Bean
     CommandLineRunner initialAdmin() {
         return args -> {
@@ -47,11 +59,18 @@ public final class DataInitializer {
                 admin.setPassword(encodersConfig.passwordEncoder().encode(ADMIN_PASSWORD));
                 userRepository.save(admin);
             }
-            var entries = DEFAULT_TASK_STATUSES_SLUGS_AND_NAMES_MAP.entrySet();
-            for (var entry : entries) {
-                if (taskStatusRepository.findBySlug(entry.getKey()).isEmpty()) {
-                    TaskStatus taskStatus = new TaskStatus(entry.getKey(), entry.getValue());
+            var taskStatusEntries = DEFAULT_TASK_STATUSES_SLUGS_AND_NAMES_MAP.entrySet();
+            for (var taskStatusSlugAndName : taskStatusEntries) {
+                if (taskStatusRepository.findBySlug(taskStatusSlugAndName.getKey()).isEmpty()) {
+                    TaskStatus taskStatus = new TaskStatus(taskStatusSlugAndName.getKey(),
+                            taskStatusSlugAndName.getValue());
                     taskStatusRepository.save(taskStatus);
+                }
+            }
+            for (int i = 0; i < DEFAULT_LABEL_NAMES.size(); i++) {
+                if (labelRepository.findByName(DEFAULT_LABEL_NAMES.get(i)).isEmpty()) {
+                    Label label = new Label(DEFAULT_LABEL_NAMES.get(i));
+                    labelRepository.save(label);
                 }
             }
         };
