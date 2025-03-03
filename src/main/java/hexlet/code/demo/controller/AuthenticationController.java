@@ -3,7 +3,7 @@ package hexlet.code.demo.controller;
 import hexlet.code.demo.dto.AuthRequest;
 import hexlet.code.demo.util.JWTUtils;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class AuthenticationController {
-    @Autowired
-    private JWTUtils jwtUtils;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final JWTUtils jwtUtils;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     public String createToken(@Valid @RequestBody AuthRequest authRequest) {

@@ -153,7 +153,6 @@ public class LabelsControllerTest {
     @Test
     public void testUpdateLabel() throws Exception {
         labelRepository.save(testLabel);
-        //Long createdLabelId = labelRepository.findByName(testLabel.getName()).get().getId();
         LabelUpdateDTO labelUpdateDTO = new LabelUpdateDTO();
         labelUpdateDTO.setName(JsonNullable.of(testLabel.getName() + " updated"));
         var updateLabelRequest = put("/api/labels/{id}", testLabel.getId())
@@ -189,5 +188,12 @@ public class LabelsControllerTest {
         taskRepository.save(testTask);
         var deleteLabelRequest = delete("/api/labels/{id}", testLabel.getId());
         mockMvc.perform(deleteLabelRequest.with(token)).andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void testDeleteIncorrectLabelWithoutConnectedTask() throws Exception {
+        labelRepository.save(testLabel);
+        var deleteLabelRequest = delete("/api/labels/999");
+        mockMvc.perform(deleteLabelRequest.with(token)).andExpect(status().isNoContent());
     }
 }

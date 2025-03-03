@@ -6,8 +6,11 @@ import hexlet.code.demo.config.DataInitializer;
 import hexlet.code.demo.dto.TaskStatusDTO.TaskStatusDTO;
 import hexlet.code.demo.dto.TaskStatusDTO.TaskStatusUpdateDTO;
 import hexlet.code.demo.mapper.TaskStatusMapper;
+import hexlet.code.demo.model.Task;
 import hexlet.code.demo.model.TaskStatus;
 import hexlet.code.demo.model.User;
+import hexlet.code.demo.repository.LabelRepository;
+import hexlet.code.demo.repository.TaskRepository;
 import hexlet.code.demo.repository.TaskStatusRepository;
 import hexlet.code.demo.repository.UserRepository;
 import hexlet.code.demo.util.ModelGenerator;
@@ -62,6 +65,12 @@ class TaskStatusControllerTest {
     private UserRepository userRepository;
 
     @Autowired
+    private TaskRepository taskRepository;
+
+    @Autowired
+    private LabelRepository labelRepository;
+
+    @Autowired
     private ModelGenerator modelGenerator;
 
     @Autowired
@@ -73,10 +82,14 @@ class TaskStatusControllerTest {
 
     private TaskStatus testTaskStatus;
 
+    private Task testTask;
+
     @BeforeEach
     public void setUp() {
+        taskRepository.deleteAll();
         userRepository.deleteAll();
         taskStatusRepository.deleteAll();
+        labelRepository.deleteAll();
 
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
@@ -89,10 +102,12 @@ class TaskStatusControllerTest {
             TaskStatus taskStatus = new TaskStatus(entry.getKey(), entry.getValue());
             taskStatusRepository.save(taskStatus);
         }
+        testTask = Instancio.of(modelGenerator.getTaskModel()).create();
     }
 
     @Test
     void testIndexTaskStatus() throws Exception {
+        taskStatusRepository.save(testTaskStatus);
         var result = mockMvc.perform(get("/api/task_statuses").with(token))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -100,18 +115,16 @@ class TaskStatusControllerTest {
         assertThatJson(body).isArray();
         List<TaskStatus> statusesInDb = taskStatusRepository.findAll();
         List<TaskStatusDTO> dtoFromResponse = objectMapper.readValue(body, new TypeReference<>() { });
-        List<TaskStatus> modelFromResponse = dtoFromResponse.stream().map(taskStatusMapper::map).toList();
+        List<TaskStatus> modelFromResponse = dtoFromResponse.stream()
+                .map(taskStatusMapper::map)
+                .toList();
         Assertions.assertThat(statusesInDb).containsExactlyInAnyOrderElementsOf(modelFromResponse);
     }
 
     @Test
     void testShowTaskStatus() throws Exception {
-        var createTaskStatusRequest = post("/api/task_statuses")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testTaskStatus));
-        mockMvc.perform(createTaskStatusRequest.with(token)).andExpect(status().isCreated());
-        var createdTaskStatus = taskStatusRepository.findBySlug(testTaskStatus.getSlug()).get();
-        var getTaskStatusRequest = get("/api/task_statuses/{id}", createdTaskStatus.getId());
+        taskStatusRepository.save(testTaskStatus);
+        var getTaskStatusRequest = get("/api/task_statuses/{id}", testTaskStatus.getId());
         var result = mockMvc.perform(getTaskStatusRequest.with(token))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -144,25 +157,21 @@ class TaskStatusControllerTest {
 
     @Test
     void testCreateExistingSlugTaskStatus() throws Exception {
+        taskStatusRepository.save(testTaskStatus);
         var createTaskStatusRequest = post("/api/task_statuses")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testTaskStatus));
-        mockMvc.perform(createTaskStatusRequest.with(token)).andExpect(status().isCreated());
         assertThat(taskStatusRepository.findBySlug(testTaskStatus.getSlug()).get()).isNotNull();
         mockMvc.perform(createTaskStatusRequest.with(token)).andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void testUpdateTaskStatus() throws Exception {
-        var createTaskStatusRequest = post("/api/task_statuses")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testTaskStatus));
-        mockMvc.perform(createTaskStatusRequest.with(token)).andExpect(status().isCreated());
-        var createdTaskStatus = taskStatusRepository.findBySlug(testTaskStatus.getSlug()).get();
+        taskStatusRepository.save(testTaskStatus);
         String newTaskName = "New name for slug " + testTaskStatus.getSlug();
         TaskStatusUpdateDTO taskStatusUpdateDTO = new TaskStatusUpdateDTO();
         taskStatusUpdateDTO.setName(JsonNullable.of(newTaskName));
-        var updateRequest = put("/api/task_statuses/{id}", createdTaskStatus.getId())
+        var updateRequest = put("/api/task_statuses/{id}", testTaskStatus.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(taskStatusUpdateDTO));
         mockMvc.perform(updateRequest.with(token)).andExpect(status().isOk());
@@ -175,22 +184,24 @@ class TaskStatusControllerTest {
 
     @Test
     void testDeleteTaskStatus() throws Exception {
-        var createTaskStatusRequest = post("/api/task_statuses")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testTaskStatus));
-        mockMvc.perform(createTaskStatusRequest.with(token)).andExpect(status().isCreated());
-        var createdTaskStatus = taskStatusRepository.findBySlug(testTaskStatus.getSlug()).get();
-        var deleteRequest = delete("/api/task_statuses/{id}", createdTaskStatus.getId());
+        taskStatusRepository.save(testTaskStatus);
+        var deleteRequest = delete("/api/task_statuses/{id}", testTaskStatus.getId());
         mockMvc.perform(deleteRequest.with(token)).andExpect(status().isNoContent());
     }
 
     @Test
+    public void testDeleteTaskStatusConnectedWithTask() throws Exception {
+        taskStatusRepository.save(testTaskStatus);
+        testTask.setTaskStatus(testTaskStatus);
+        taskRepository.save(testTask);
+        var deleteTaskStatusRequest = delete("/api/task_statuses/{id}", testTaskStatus.getId());
+        mockMvc.perform(deleteTaskStatusRequest.with(token)).andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void testDeleteIncorrectTaskStatus() throws Exception {
-        var createTaskStatusRequest = post("/api/task_statuses")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testTaskStatus));
-        mockMvc.perform(createTaskStatusRequest.with(token));
-        var deleteRequest = delete("/api/task_statuses/999");
+        taskStatusRepository.save(testTaskStatus);
+        var deleteRequest = delete("/api/task_statuses/9999");
         mockMvc.perform(deleteRequest.with(token)).andExpect(status().isNoContent());
     }
 }
