@@ -1,5 +1,7 @@
 package hexlet.code.demo;
 
+import io.github.cdimascio.dotenv.Dotenv;
+import io.sentry.Sentry;
 import net.datafaker.Faker;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,5 +17,13 @@ public class AppApplication {
     @Bean
     public Faker getFaker() {
         return new Faker();
+    }
+
+    private static void testSentry() {
+        try {
+            throw new Exception("This is a Sentry test.");
+        } catch (Exception e) {
+            Sentry.captureException(e);
+        }
     }
 }

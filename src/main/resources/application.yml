@@ -21,7 +21,8 @@ spring:
       enabled: always
 
 sentry:
-  dsn: https://examplePublicKey@o0.ingest.sentry.io/0
+  dsn: https://93a45037035bb5a8fd7d9db8548f44a2@o4508914318376960.ingest.de.sentry.io/4508914325192784
+  send-default-pii: true
   tracesSampleRate: 1.0
 
 rsa:

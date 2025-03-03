@@ -6,6 +6,7 @@ plugins {
 	id("org.springframework.boot") version "3.2.2"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("com.github.ben-manes.versions") version "0.50.0"
+	id("io.sentry.jvm.gradle") version "5.3.0"
 }
 
 group = "hexlet.code"
@@ -41,7 +42,7 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:1.6.0.Beta1")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.0.Beta1")
 
-	// implementation("io.github.wimdeblauwe:error-handling-spring-boot-starter:4.2.0")
+	implementation("io.github.cdimascio:dotenv-java:2.2.0")
 
 	implementation("org.instancio:instancio-junit:3.6.0")
 	implementation("net.javacrumbs.json-unit:json-unit-assertj:3.2.2")
@@ -60,3 +61,17 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 tasks.jacocoTestReport { reports { xml.required.set(true) } }
+
+sentry {
+	// Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+	// This enables source context, allowing you to see your source
+	// code as part of your stack traces in Sentry.
+	includeSourceContext = true
+
+	org = "bachaeva-gilyana"
+	projectName = "java-spring-boot"
+	authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
+tasks.sentryBundleSourcesJava {
+	enabled = System.getenv("SENTRY_AUTH_TOKEN") != null
+}
